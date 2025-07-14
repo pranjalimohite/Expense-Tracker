@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Expense</title>
+    <link rel="stylesheet" href="{% static 'users/style.css' %}">
+    <style>
+        body {
+            background:rgb(140, 143, 140);
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .form-container {
+            margin: 60px auto;
+            padding: 40px;
+            background: rgb(226, 233, 226);
+            color: rgb(23, 23, 23);
+            border-radius: 20px;
+            max-width: 400px;
+            text-align: center;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+        h2 {
+            
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            color: black;
+        }
+        input, select {
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            font-size: 1rem;
+        }
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 20px;
+            background: #fff;
+            color: black;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s, color 0.3s;
+        }
+        button:hover {
+            background: #eee;
+            color: gray;
+        }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            color: black;
+            text-decoration: underline;
+        }
+        .color1{
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2 class="color1">Add Expense</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Add Expense</button>
+        </form>
+        <a href="{% url 'dashboard' %}" class="back-link"> <- Back to Dashboard</a>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="{% static 'users/style.css' %}">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background:rgb(124, 127, 127);
+            color: #333;
+        }
+
+        .dashboard-container {
+            max-width: 900px;
+            margin: 80px auto;
+            padding: 40px;
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #222;
+        }
+
+        h3 {
+            color: #2e7d32;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .dashboard-buttons a button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: #fff;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .dashboard-buttons a button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(to right, #5b0ea0, #1e63e6);
+        }
+
+        .home-btn {
+            margin-top: 30px;
+        }
+
+        .home-btn button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 30px;
+            background-color: #f1f1f1;
+            color: #333;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .home-btn button:hover {
+            background-color: #e0e0e0;
+        }
+
+        @media screen and (max-width: 768px) {
+            .dashboard-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>Hello, {{ user.username }}!</h1>
+
+        {% if total_budget > 0 %}
+            <h3>Total Budget: ₹{{ total_budget }}</h3>
+        {% else %}
+            <h3 style="color: orange;">No Budget Set Yet</h3>
+        {% endif %}
+
+        <div class="dashboard-buttons">
+            <a href="{% url 'add_budget' %}"><button>Add Budget</button></a>
+            <a href="{% url 'add_expense' %}"><button>Add Expense</button></a>
+            <a href="{% url 'expense_summary' %}"><button>Expense Summary</button></a>
+            <a href="{% url 'income_summary' %}"><button>Income Summary</button></a>
+        </div>
+
+        <div class="home-btn">
+            <a href="{% url 'home' %}"><button>Go to Home</button></a>
+        </div>
+    </div>
+</body>
+</html>

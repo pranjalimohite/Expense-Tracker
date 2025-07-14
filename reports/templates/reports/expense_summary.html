@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Expense Summary</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .summary-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px auto;
+        }
+
+        .summary-box, .summary1-box {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            width: 220px;
+            text-align: center;
+        }
+
+        .summary-box h2,
+        .summary1-box h2 {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .summary-box p,
+        .summary1-box p {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .green { color: green; }
+        .red { color: red; }
+        .yellow { color: #c9a400; }
+        .blue { color: #007bff; }
+
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            margin: 40px auto;
+        }
+
+        .chart-box {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            width: 500px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            margin-top: 30px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f1f1f1;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .back-link {
+            display: block;
+            margin: 40px auto 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            margin: 0 2px;
+            transition: 0.2s;
+        }
+
+        .edit-btn {
+            background: #3498db;
+            color: #fff;
+        }
+
+        .edit-btn:hover {
+            background: #217dbb;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: #fff;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+
+        /* Budget Bar */
+        .budget-bar-container {
+            max-width: 600px;
+            margin: 30px auto;
+        }
+
+        .budget-bar-background {
+            background-color: #e0e0e0;
+            border-radius: 25px;
+            overflow: hidden;
+            height: 25px;
+        }
+
+        .budget-bar-fill {
+            height: 100%;
+            width: {{ expense_percentage }}%;
+            background-color: {{ progress_color }};
+            color: white;
+            text-align: center;
+            line-height: 25px;
+            transition: width 0.4s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Expense Summary</h1>
+    <div style="text-align:center; margin-bottom: 20px;">
+        <a href="{% url 'download_expense_report' %}" class="edit-btn" style="background:#28a745;">Download Report</a>
+    </div>
+
+    <!-- Budget Utilization Progress Bar -->
+    <div class="budget-bar-container">
+        <h3 style="text-align:center;">Budget Utilization</h3>
+        <div class="budget-bar-background">
+            <div class="budget-bar-fill">
+                {{ expense_percentage }}%
+            </div>
+        </div>
+    </div>
+
+    {% if expense_percentage > 75 %}
+        <div style="max-width:600px; margin:20px auto; background:#ffeaea; color:#b30000; border:1px solid #ffb3b3; border-radius:8px; padding:16px; text-align:center; font-weight:bold;">
+            Warning: You are spending too much! Your expenses have exceeded 75% of your budget.
+        </div>
+    {% endif %}
+
+    <!-- Summary Boxes (Top 4) -->
+    <div class="summary-container">
+        <div class="summary-box">
+            <h2>Total Budget</h2>
+            <p class="green">₹{{ total_budget }}</p>
+        </div>
+        <div class="summary-box">
+            <h2>Total Expense</h2>
+            <p class="red">₹{{ total_expense }}</p>
+        </div>
+        <div class="summary-box">
+            <h2>Savings</h2>
+            <p class="yellow">₹{{ savings }}</p>
+        </div>
+        <div class="summary-box">
+            <h2>Balance</h2>
+            <p class="blue">₹{{ balance }}</p>
+        </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="chart-container">
+        <div class="chart-box">
+            <h3 style="text-align:center;">Expense by Type</h3>
+            <canvas id="pieChart"></canvas>
+        </div>
+        <div class="chart-box">
+            <h3 style="text-align:center;">Monthly Expenses</h3>
+            <canvas id="barChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Summary Details -->
+    <div class="summary-container">
+        <div class="summary1-box"><h2>Current Month Expense</h2><p>₹{{ current_month_total }}</p></div>
+        <div class="summary1-box"><h2>Last Month Expense</h2><p>₹{{ last_month_total }}</p></div>
+        <div class="summary1-box"><h2>Change from Last Month</h2><p>{{ percentage_change }}% ({{ comparison|floatformat:2 }})</p></div>
+        <div class="summary1-box"><h2>Monthly Avg</h2><p>₹{{ monthly_average }}</p></div>
+        <div class="summary1-box"><h2>Daily Avg (This Month)</h2><p>₹{{ daily_average }}</p></div>
+        <div class="summary1-box"><h2>Top Category</h2><p>{{ biggest_category.expense_type }}: ₹{{ biggest_category.total }}</p></div>
+        <div class="summary1-box"><h2>Least Category</h2><p>{{ smallest_category.expense_type }}: ₹{{ smallest_category.total }}</p></div>
+        <div class="summary1-box"><h2>Biggest Expense</h2><p>{{ biggest_expense.expense_type }}: ₹{{ biggest_expense.amount }}</p></div>
+        <div class="summary1-box"><h2>Smallest Expense</h2><p>{{ smallest_expense.expense_type }}: ₹{{ smallest_expense.amount }}</p></div>
+    </div>
+
+    <!-- Expense Table -->
+    {% if expenses %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}
+                <tr>
+                    <td>{{ expense.date }}</td>
+                    <td>{{ expense.expense_type }}</td>
+                    <td>₹{{ expense.amount }}</td>
+                    <td>
+                        <a href="{% url 'update_expense' expense.id %}" class="edit-btn">Edit</a>
+                        <a href="{% url 'delete_expense' expense.id %}" class="delete-btn">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="text-align:center;">No expenses found.</p>
+    {% endif %}
+
+    <a class="back-link" href="{% url 'dashboard' %}">← Back to Dashboard</a>
+
+    <!-- Chart.js -->
+    <script>
+        const pieLabels = {{ expense_type_labels|safe }};
+        const pieData = {{ expense_type_data|safe }};
+        const barLabels = {{ monthly_labels|safe }};
+        const barData = {{ monthly_data|safe }};
+
+        // Pie Chart
+        new Chart(document.getElementById('pieChart'), {
+            type: 'pie',
+            data: {
+                labels: pieLabels,
+                datasets: [{
+                    data: pieData,
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#66BB6A', '#BA68C8', '#FFA726'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+
+        // Bar Chart
+        new Chart(document.getElementById('barChart'), {
+            type: 'bar',
+            data: {
+                labels: barLabels,
+                datasets: [{
+                    label: 'Monthly Expenses',
+                    data: barData,
+                    backgroundColor: '#42A5F5',
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    </script>
+</body>
+</html>

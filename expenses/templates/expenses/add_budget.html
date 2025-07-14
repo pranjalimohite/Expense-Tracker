@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Budget</title>
+    <link rel="stylesheet" href="{% static 'users/style.css' %}">
+    <style>
+        body {
+            background:rgb(140, 143, 140);
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .form-container {
+            background-color: rgb(226, 233, 226);
+            color: #170826;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            margin: 100px auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 10px;
+            border: none;
+            font-size: 1rem;
+        }
+        button {
+            background: white;
+            color: #170826;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Add Budget</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Add</button>
+        </form>
+        <p style="text-align:center;margin-top:20px;">
+            <a href="{% url 'dashboard' %}" style="color:black;">← Back to Dashboard</a>
+        </p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Expense Tracker Home</title>
+    <link rel="stylesheet" href="{% static 'users/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom, #ffffff, #f9f9f4);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            width: 100%;
+            height: 80px;
+            display: flex;
+            justify-content: center;  /* Center horizontally */
+            align-items: center;
+            background-color: #ffffff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .header-buttons button {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(80,81,80);
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .header-buttons button:hover {
+            background: rgba(62,63,62);
+        }
+
+        .main-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .main-section img {
+            width: 350px;
+            max-width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        .main-section h1 {
+            color: #222;
+            margin-top: 30px;
+            font-size: 2.5rem;
+        }
+
+        .main-section p {
+            color: #555;
+            margin-top: 15px;
+            font-size: 1.1rem;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 600px) {
+            .header-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .main-section h1 {
+                font-size: 2rem;
+            }
+
+            .main-section p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-buttons">
+            <a href="{% url 'register' %}"><button>Signup</button></a>
+            <a href="{% url 'login' %}"><button>Login</button></a>
+        </div>
+    </div>
+
+    <div class="main-section">
+        <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40" alt="Expense Tracker">
+        <h1>Track Your Expenses Easily</h1>
+        <p>
+            Manage your finances with our clean and intuitive expense tracker.
+            Sign up or log in to get started and take control of your spending today!
+        </p>
+    </div>
+</body>
+</html>
