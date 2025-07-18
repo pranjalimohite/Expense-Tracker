@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+  .balances-container {
+    max-width: 420px;
+    margin: 40px auto;
+    padding: 24px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+  }
+  h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 18px;
+    text-align: center;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 18px 0;
+  }
+  li {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .owes {
+    color: #b91c1c;
+    background: #fee2e2;
+    font-weight: 500;
+  }
+  .gets {
+    color: #166534;
+    background: #dcfce7;
+    font-weight: 500;
+  }
+  .settled {
+    color: #64748b;
+    background: #f1f5f9;
+    font-weight: 400;
+  }
+  .back-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #2575fc;
+    text-decoration: none;
+    font-size: 0.97rem;
+    font-weight: 500;
+  }
+  .back-link:hover {
+    text-decoration: underline;
+  }
+</style>
+<div class="balances-container">
+  <h2>Balances for Group: {{ group.name }}</h2>
+  <ul>
+    {% for result in results %}
+      <li class="{{ result.status }}">
+        <span>{{ result.username }}</span>
+        {% if result.status == 'owes' %}
+          <span>owes ₹{{ result.balance|floatformat:2|slice:'1:' }}</span>
+        {% elif result.status == 'gets' %}
+          <span>gets ₹{{ result.balance|floatformat:2 }}</span>
+        {% else %}
+          <span>settled</span>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+  <a href="{% url 'group_detail' group.id %}" class="back-link">&larr; Back to Group</a>
+</div>
+{% endblock %} 

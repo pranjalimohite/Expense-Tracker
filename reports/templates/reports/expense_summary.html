@@ -225,30 +225,33 @@
     </div>
 
     <!-- Expense Table -->
-    {% if expenses %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Type</th>
-                    <th>Amount</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for expense in expenses %}
-                <tr>
-                    <td>{{ expense.date }}</td>
-                    <td>{{ expense.expense_type }}</td>
-                    <td>₹{{ expense.amount }}</td>
-                    <td>
-                        <a href="{% url 'update_expense' expense.id %}" class="edit-btn">Edit</a>
-                        <a href="{% url 'delete_expense' expense.id %}" class="delete-btn">Delete</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    {% if categorized_expenses %}
+        {% for category, expenses_in_cat in categorized_expenses.items %}
+            <h2 style="margin-top:40px; color:#2575fc;">{{ category }}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for expense in expenses_in_cat %}
+                    <tr>
+                        <td>{{ expense.date }}</td>
+                        <td>{{ expense.expense_type }}</td>
+                        <td>₹{{ expense.amount }}</td>
+                        <td>
+                            <a href="{% url 'update_expense' expense.id %}" class="edit-btn">Edit</a>
+                            <a href="{% url 'delete_expense' expense.id %}" class="delete-btn">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
     {% else %}
         <p style="text-align:center;">No expenses found.</p>
     {% endif %}

@@ -13,12 +13,18 @@ import json
 import csv
 from django.http import HttpResponse
 from expenses.models import Expense
+from collections import defaultdict
 
 
 @login_required
 def expense_summary_view(request):
     # Fetch expenses
     expenses = Expense.objects.filter(user=request.user).order_by('-date')
+
+    # Group expenses by category
+    categorized_expenses = defaultdict(list)
+    for expense in expenses:
+        categorized_expenses[expense.category].append(expense)
 
     # Total expense
     total_expense = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
@@ -76,6 +82,7 @@ def expense_summary_view(request):
 
     context = {
         'expenses': expenses,
+        'categorized_expenses': categorized_expenses,
         'total_expense': total_expense,
         'total_budget': total_budget,
         'savings': savings,

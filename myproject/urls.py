@@ -31,6 +31,6 @@ urlpatterns = [
     path('dashboard/', expense_views.dashboard_view, name='dashboard'),
     path('add-budget/', expense_views.add_budget_view, name='add_budget'),
     path('add-expense/', expense_views.add_expense_view, name='add_expense'),
-    
+    path('groups/', include('expensesSharing.urls')),
 ]
 

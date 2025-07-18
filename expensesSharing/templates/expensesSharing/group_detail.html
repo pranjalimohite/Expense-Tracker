@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+  html, body {
+    height: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+    color: #222;
+    background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+    box-sizing: border-box;
+  }
+  body {
+    min-height: 100vh;
+    padding: 32px 0 32px 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+  .container {
+    width: 900px;
+    max-width: 98vw;
+    margin: 0 auto;
+    padding: 36px 28px 24px 28px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.10);
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  .top-bar {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 10px;
+  }
+  .dashboard-btn, .balances-btn {
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    color: #fff !important;
+    border: none;
+    border-radius: 22px;
+    padding: 10px 28px;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.2s;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .dashboard-btn:hover, .balances-btn:hover {
+    background: linear-gradient(to right, #5b0ea0, #1e63e6);
+    color: #fff !important;
+    transform: scale(1.04);
+    text-decoration: none;
+  }
+  .group-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #22223b;
+    margin: 18px 0 28px 0;
+    letter-spacing: 0.5px;
+  }
+  .main-section {
+    display: flex;
+    gap: 40px;
+    justify-content: space-between;
+    flex: 1;
+    margin-bottom: 32px;
+  }
+  .members-section, .expenses-section {
+    flex: 1;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 24px 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    min-width: 0;
+  }
+  .members-section {
+    margin-right: 10px;
+  }
+  .expenses-section {
+    margin-left: 10px;
+  }
+  h3 {
+    font-size: 1.2rem;
+    color: #374151;
+    font-weight: 500;
+    margin-bottom: 14px;
+    border-bottom: 1px solid #e5e5e5;
+    padding-bottom: 6px;
+  }
+  ul {
+    list-style: disc;
+    padding-left: 22px;
+    margin: 12px 0 22px 0;
+  }
+  li {
+    margin-bottom: 10px;
+    font-size: 1rem;
+    color: #22223b;
+    font-family: inherit;
+  }
+  .add-link {
+    color: #2575fc;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    transition: color 0.2s;
+  }
+  .add-link:hover {
+    text-decoration: underline;
+    color: #1e63e6;
+  }
+  .delete-btn {
+    background: #f87171;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 2px 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: background 0.2s;
+  }
+  .delete-btn:hover {
+    background: #e53e3e;
+  }
+  .footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+  }
+  .delete-group-btn {
+    background: linear-gradient(to right, #e53e3e, #f87171);
+    color: #fff;
+    border: none;
+    border-radius: 18px;
+    padding: 10px 28px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    font-family: inherit;
+  }
+  .delete-group-btn:hover {
+    background: linear-gradient(to right, #c53030, #f56565);
+    transform: scale(1.03);
+  }
+</style>
+
+<div class="container">
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <a href="{% url 'dashboard' %}" class="dashboard-btn">Go to Dashboard</a>
+    <a href="{% url 'group_expense_balances' group.id %}" class="balances-btn">View Balances</a>
+  </div>
+  <!-- Group Name -->
+  <div class="group-title">Group: {{ group.name }}</div>
+  <!-- Main Section: Members (left) and Expenses (right) -->
+  <div class="main-section">
+    <div class="members-section">
+      <h3>Members</h3>
+      {% if members %}
+        <ul>
+          {% for member in members %}
+            <li>{{ member.user.username }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No members in this group yet.</p>
+      {% endif %}
+      <a href="{% url 'add_group_member' group.id %}" class="add-link">➕ Add Member</a>
+    </div>
+    <div class="expenses-section">
+      <h3>Expenses</h3>
+      {% if expenses %}
+        <ul>
+          {% for expense in expenses %}
+            <li>
+              {{ expense.description }} - ₹{{ expense.amount }}
+              <form method="post" action="{% url 'delete_expense' expense.id %}" style="display:inline;" onsubmit="return confirm('Delete this expense?');">
+                {% csrf_token %}
+                <button type="submit" class="delete-btn">Delete</button>
+              </form>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No expenses added yet.</p>
+      {% endif %}
+      <a href="{% url 'add_group_expense' group.id %}" class="add-link">➕ Add Expense</a>
+    </div>
+  </div>
+  <!-- Footer: Delete Group Button -->
+  <div class="footer">
+    <form method="post" action="{% url 'delete_group' group.id %}" onsubmit="return confirm('Are you sure you want to delete this group? This action cannot be undone.');">
+      {% csrf_token %}
+      <button type="submit" class="delete-group-btn">
+        Delete Group
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
